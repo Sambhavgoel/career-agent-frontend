@@ -47,7 +47,7 @@ const LoginPage = () => {
         console.log('Form submitted, Attempting to login...');
         try {
             // Using relative path for deployment
-            const res = await axios.post('/api/auth/login', formData);
+            const res = await axios.post('https://career-agent.onrender.com/api/auth/login', formData);
             console.log('Registration successful : ', res.data);
             console.log('Api call successful. Token recieved: ', res.data.token);
             console.log('Attempting to set token');

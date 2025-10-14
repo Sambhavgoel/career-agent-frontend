@@ -48,7 +48,7 @@ const RegisterPage = () => {
         setError('');
         try {
             // Using relative path for deployment
-            const res = await axios.post('/api/auth/register', formData);
+            const res = await axios.post('https://career-agent.onrender.com/api/auth/register', formData);
             console.log('Registration successful : ', res.data);
             //Save the token and redirect the user
             //save token to store

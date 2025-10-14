@@ -66,7 +66,7 @@ const ChatPage = () => {
             try {
                 const config = { headers: { "x-auth-token": token } };
                 const res = await axios.get(
-                    `/api/conversations/${conversationId}`,
+                    `https://career-agent.onrender.com/api/conversations/${conversationId}`,
                     config
                 );
                 setMessages(res.data);
@@ -104,7 +104,7 @@ const ChatPage = () => {
         try {
             const config = { headers: { "x-auth-token": token } };
             const res = await axios.post(
-                "/api/conversations",
+                "https://career-agent.onrender.com/api/conversations",
                 { message: input, conversationId, history },
                 config
             );

@@ -45,7 +45,7 @@ const AnalyzerPage = () => {
       const config = { headers: { "x-auth-token": token } };
       // Using relative path for deployment
       const res = await axios.post(
-        "/api/agent/analyzer",
+        "https://career-agent.onrender.com/api/agent/analyzer",
         { resumeText, jobDescriptionText },
         config
       );

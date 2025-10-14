@@ -17,7 +17,7 @@ const ConversationSidebar = () => {
             setIsLoading(true);
             try {
                 const config = { headers: { 'x-auth-token': token } };
-                const res = await axios.get('/api/conversations', config);
+                const res = await axios.get('https://career-agent.onrender.com/api/conversations', config);
                 setConversations(res.data);
             } catch (error) {
                 console.error("Failed to fetch conversations", error);
