@@ -20,16 +20,18 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'; // Icon for Guest Button
 
 const LoginPage = () => {
-    // --- YOUR LOGIC REMAINS COMPLETELY UNCHANGED ---
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
-    const [showPassword, setShowPassword] = useState(false); // State for password visibility
+    const [showPassword, setShowPassword] = useState(false);
+
+    const [isGuestLoading, setIsGuestLoading] = useState(false);
 
     const navigate = useNavigate();
     const setToken = useAuthStore((state) => state.setToken);
@@ -46,7 +48,6 @@ const LoginPage = () => {
         setError('');
         console.log('Form submitted, Attempting to login...');
         try {
-            // Using relative path for deployment
             const res = await axios.post('https://career-agent.onrender.com/api/auth/login', formData);
             console.log('Registration successful : ', res.data);
             console.log('Api call successful. Token recieved: ', res.data.token);
@@ -62,12 +63,27 @@ const LoginPage = () => {
         }
     };
 
-    // Handlers for the show/hide password toggle
+    const handleGuestLogin = async () => {
+        setIsGuestLoading(true);
+        setError('');
+        try {
+            const res = await axios.post('https://career-agent.onrender.com/api/auth/guest');
+            setToken(res.data.token);
+            navigate('/dashboard');
+        } catch (err) {
+            console.error('Guest Login Error : ', err.response?.data);
+            setError('Guest login failed. Please try again.');
+        } finally {
+            setIsGuestLoading(false);
+        }
+    };
+
+
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
-    // --- END OF UNCHANGED LOGIC ---
+
 
     return (
         <Box
@@ -76,14 +92,15 @@ const LoginPage = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minHeight: 'calc(100vh - 64px)', // Full height minus Navbar
+                minHeight: 'calc(100vh - 64px)',
                 backgroundColor: (theme) => theme.palette.grey[50],
+                p: 3,
             }}
         >
             <Paper
                 elevation={6}
                 sx={{
-                    p: 4,
+                    p: { xs: 3, sm: 4 },
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -147,11 +164,26 @@ const LoginPage = () => {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{ mt: 3, mb: 2, py: 1.5, fontSize: '1rem' }}
-                        disabled={isLoading}
+                        sx={{ mt: 3, mb: 1, py: 1.5, fontSize: '1rem' }} // Adjusted margin bottom
+                        disabled={isLoading || isGuestLoading} // Disable if guest login is loading
                     >
                         {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
                     </Button>
+
+                    
+                    <Button
+                        type="button"
+                        fullWidth
+                        variant="outlined" // Different style for guest button
+                        startIcon={isGuestLoading ? <CircularProgress size={20} /> : <PersonOutlineIcon />}
+                        sx={{ mt: 1, mb: 2, py: 1.5, fontSize: '1rem' }}
+                        disabled={isLoading || isGuestLoading} // Disable if regular login is loading
+                        onClick={handleGuestLogin}
+                    >
+
+                        Continue as Guest
+                    </Button>
+
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link component={RouterLink} to="/register" variant="body2">
