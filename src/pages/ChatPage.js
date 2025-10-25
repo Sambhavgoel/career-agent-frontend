@@ -116,7 +116,7 @@ const ChatPage = () => {
             );
             const aiMessage = { role: "model", parts: [{ text: res.data.reply }] };
 
-            if (!conversationId) {
+            if (!conversationId && !isGuest && res.data.conversationId) {
                 setMessages((prev) => [...prev, aiMessage]);
                 navigate(`/chat/${res.data.conversationId}`);
             } else {
