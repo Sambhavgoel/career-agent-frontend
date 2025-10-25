@@ -23,9 +23,10 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 
-// ✅ THIS IS THE PERMANENT FIX.
-// It specifically targets pre-formatted and code blocks to force them to wrap.
-const MessagePaper = styled(Paper)(({ theme, isUser }) => ({
+
+const MessagePaper = styled(Paper, {
+    shouldForwardProp: (prop) => prop !== 'isUser'
+})(({ theme, isUser }) => ({
     padding: theme.spacing(1.2, 2),
     backgroundColor: isUser ? theme.palette.primary.main : theme.palette.background.paper,
     color: isUser ? theme.palette.primary.contrastText : theme.palette.text.primary,
@@ -46,7 +47,6 @@ const MessagePaper = styled(Paper)(({ theme, isUser }) => ({
 }));
 
 const ChatPage = () => {
-    // --- YOUR LOGIC REMAINS UNCHANGED ---
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -54,12 +54,14 @@ const ChatPage = () => {
     const { conversationId } = useParams();
     const navigate = useNavigate();
     const token = useAuthStore((state) => state.token);
+    const isGuest = useAuthStore((state)=> state.isGuest)
     const chatWindowRef = useRef(null);
 
     useEffect(() => {
         const loadHistory = async () => {
-            if (!conversationId) {
+            if (!conversationId || isGuest) {
                 setMessages([]);
+                setIsHistoryLoading(false)
                 return;
             }
             setIsHistoryLoading(true);
@@ -77,8 +79,12 @@ const ChatPage = () => {
                 setIsHistoryLoading(false);
             }
         };
-        if (token) loadHistory();
-    }, [conversationId, token, navigate]);
+        if (token){ loadHistory()}
+        else{
+            setIsHistoryLoading(false)
+            setMessages([])
+        };
+    }, [conversationId, token, navigate,isGuest]);
 
     useEffect(() => {
         if (chatWindowRef.current) {
